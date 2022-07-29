@@ -28,19 +28,17 @@ with open(infile, 'r') as f:
 try:
     for line_counter, line in enumerate(lines[line_begin:], start=line_begin):
         line = line.strip().split()
+        starttime = time.time()
         for word_counter, word in enumerate(line[word_begin:], start=word_begin):
             print(f'{word:^40} {line_counter:06d} {word_counter:06d}', end='\r')
 
-            sleep(wpm)
-
             # after the word, we add extra waiting time in certain cases
-            for _ in range(len(word.split('-'))):
+            for _ in range(len(word.split('-'))): # this does at least one iteration per word
                 sleep(wpm)
             if len(word) > 8:
                 sleep(wpm)
-            if word.endswith('.') or word.endswith(','):
+            if not word[-1].isalpha():
                 sleep(wpm)
-
 
         word_begin = 0
     
@@ -48,4 +46,3 @@ try:
 except KeyboardInterrupt:
     # The current line is displayed when the script is canceled
     print(f'Interrupted at line {line_counter:06d}')
-
