@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const fontToggle = document.getElementById('fontToggle');
     const incrementWPMBtn = document.getElementById('incrementWPMBtn');
     const decrementWPMBtn = document.getElementById('decrementWPMBtn');
+    const incrementPosBtn = document.getElementById('incrementPosBtn');
+    const decrementPosBtn = document.getElementById('decrementPosBtn');
 });
 
 function incrementWPM() {
@@ -32,6 +34,18 @@ function decrementWPM() {
     let newWPM = currentWPM - 10;
     if (newWPM < 10) newWPM = 10;
     updateWPM(newWPM);
+}
+
+function incrementPos() {
+    let newPos = currentIndex + 100;
+    if (newPos > wordsArray.length - 1) newPos = wordsArray.length;
+    currentIndex = newPos;
+}
+
+function decrementPos() {
+    let newPos = currentIndex - 100;
+    if (newPos < 0) newPos = - 1;
+    currentIndex = newPos;
 }
 
 // ---------- THEME MANAGEMENT ----------
@@ -70,11 +84,9 @@ function setFont(fontType) {
     if (fontType === 'serif') {
         document.documentElement.setAttribute('data-font', 'serif');
         localStorage.setItem('font', 'serif');
-        // Button will automatically use CSS rule for [data-font="serif"] #fontToggle
     } else {
         document.documentElement.setAttribute('data-font', 'sans');
         localStorage.setItem('font', 'sans');
-        // Button will automatically use CSS rule for [data-font="sans"] #fontToggle
     }
 }
 
@@ -260,7 +272,8 @@ themeToggle.addEventListener('click', toggleTheme);
 fontToggle.addEventListener('click', toggleFont);
 incrementWPMBtn.addEventListener('click', incrementWPM);
 decrementWPMBtn.addEventListener('click', decrementWPM);
-
+incrementPosBtn.addEventListener('click', incrementPos);
+decrementPosBtn.addEventListener('click', decrementPos);
 
 
 
