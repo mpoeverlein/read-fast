@@ -7,19 +7,19 @@ let currentWPM = 300;       // default
 
 // DOM elements
 document.addEventListener('DOMContentLoaded', function() {
-const wordDisplay = document.getElementById('wordDisplay');
-const playBtn = document.getElementById('playBtn');
-const pauseBtn = document.getElementById('pauseBtn');
-const resetBtn = document.getElementById('resetBtn');
-const wpmDisplay = document.getElementById('wpmDisplay');
-const textInput = document.getElementById('textInput');
-const loadTextBtn = document.getElementById('loadTextBtn');
-const sampleTextBtn = document.getElementById('sampleTextBtn');
-const statusMsg = document.getElementById('statusMsg');
-const themeToggle = document.getElementById('themeToggle');
-const fontToggle = document.getElementById('fontToggle');
-const incrementWPMBtn = document.getElementById('incrementWPMBtn');
-const decrementWPMBtn = document.getElementById('decrementWPMBtn');
+    const wordDisplay = document.getElementById('wordDisplay');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const wpmDisplay = document.getElementById('wpmDisplay');
+    const textInput = document.getElementById('textInput');
+    const loadTextBtn = document.getElementById('loadTextBtn');
+    const sampleTextBtn = document.getElementById('sampleTextBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const themeToggle = document.getElementById('themeToggle');
+    const fontToggle = document.getElementById('fontToggle');
+    const incrementWPMBtn = document.getElementById('incrementWPMBtn');
+    const decrementWPMBtn = document.getElementById('decrementWPMBtn');
 });
 
 function incrementWPM() {
@@ -196,12 +196,33 @@ function loadTextFromInput() {
     let words = rawText.trim().split(/\s+/);
     words = words.filter(w => w.length > 0);
     
-    if (words.length === 0) {
+    // Split long words into halves
+    let processedWords = [];
+    for (let word of words) {
+        if (word.length > 10 && word.includes('-')) {
+            // Split along hyphen
+            let hyphenParts = word.split('-');
+            for (let part of hyphenParts) {
+                if (part.length > 0) {
+                    processedWords.push(part);
+                }
+            }
+        } else if (word.length > 10) {
+            const midpoint = Math.ceil(word.length / 2);
+            const firstHalf = word.slice(0, midpoint);
+            const secondHalf = word.slice(midpoint);
+            processedWords.push(firstHalf, secondHalf);
+        } else {
+            processedWords.push(word);
+        }
+    }
+    
+    if (processedWords.length === 0) {
         statusMsg.innerText = '❌ No valid words found.';
         return false;
     }
     
-    wordsArray = words;
+    wordsArray = processedWords;
     currentIndex = 0;
     stopTimer();
     displayCurrentWord();

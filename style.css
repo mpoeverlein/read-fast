@@ -179,7 +179,6 @@ h1 {
     color: var(--word-color);
     word-break: break-word;
     transition: all 0.05s ease;
-    /* font-family: 'Courier New', 'Fira Code', monospace; */
     font-family: var(--font-family);
     transition: font-family 0.2s ease;
 }
@@ -189,7 +188,6 @@ h1 {
 }
 
 [data-font="sans"] .word {
-    /* font-family: 'Courier New', 'Fira Code', monospace; */
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -237,24 +235,6 @@ button.primary:active {
 button.danger {
     background: var(--button-danger);
     color: white;
-}
-
-.speed-control {
-    background: var(--speed-control-bg);
-    padding: 12px 16px;
-    border-radius: 60px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-}
-
-.speed-label {
-    color: var(--text-secondary);
-    font-weight: 500;
 }
 
 input[type="range"] {
