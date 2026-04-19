@@ -229,7 +229,6 @@ function updateWPM(value) {
     } else if (!isPlaying) {
         statusMsg.innerText = `⚙️ Speed set to ${currentWPM} WPM`;
     }
-    document.getElementById('wpmDisplay').innerText = currentWPM + ' WPM';
 }
 
 // ---------- EVENT LISTENERS ----------
