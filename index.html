@@ -9,8 +9,9 @@
 <body>
 
 <div class="container">
-    <h1>⚡ SPEED READER</h1>
-    <div class="sub">RSVP · rapid serial visual presentation</div>
+    <div class="header">
+        <h1>read fast.</h1>
+    </div>
 
     <!-- word display -->
     <div class="screen">
@@ -19,9 +20,15 @@
 
     <!-- playback controls -->
     <div class="controls">
-        <button id="playBtn" class="primary">▶ PLAY</button>
-        <button id="pauseBtn">⏸ PAUSE</button>
-        <button id="resetBtn" class="danger">⟳ RESET</button>
+        <button id="skipBackwardBtn">⏮</button>
+        <button id="decrementWPMBtn">⏪︎</button>
+        <button id="pauseBtn">⏸</button>
+        <button id="playBtn" class="primary">▶</button>
+        <button id="incrementWPNBtn">⏩︎</button>
+        <button id="skipForwardBtn">⏭</button>
+        <button id="resetBtn" class="danger">⟳</button>
+        <button id="themeToggle" class="theme-btn" aria-label="Toggle dark/light mode">🌙</button>
+        <button id="fontToggle" class="font-btn" aria-label="Toggle sans/serif mode">abc</button>
     </div>
 
     <!-- speed slider -->

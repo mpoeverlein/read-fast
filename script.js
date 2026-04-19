@@ -16,15 +16,77 @@ const textInput = document.getElementById('textInput');
 const loadTextBtn = document.getElementById('loadTextBtn');
 const sampleTextBtn = document.getElementById('sampleTextBtn');
 const statusMsg = document.getElementById('statusMsg');
+const themeToggle = document.getElementById('themeToggle');
+const fontToggle = document.getElementById('fontToggle');
 
-// helper: calculate delay in ms based on WPM
+// ---------- THEME MANAGEMENT ----------
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '⏾';  // Moon icon for switching to dark
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '☀︎';  // Sun icon for switching to light
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme === 'light') {
+        setTheme('dark');
+    } else {
+        setTheme('light');
+    }
+}
+
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        setTheme('light');
+    } else {
+        setTheme('dark');  // default to dark
+    }
+}
+
+/// ---------- FONT MANAGEMENT ----------
+function setFont(fontType) {
+    if (fontType === 'serif') {
+        document.documentElement.setAttribute('data-font', 'serif');
+        localStorage.setItem('font', 'serif');
+        // Button will automatically use CSS rule for [data-font="serif"] #fontToggle
+    } else {
+        document.documentElement.setAttribute('data-font', 'sans');
+        localStorage.setItem('font', 'sans');
+        // Button will automatically use CSS rule for [data-font="sans"] #fontToggle
+    }
+}
+
+function toggleFont() {
+    const currentFont = document.documentElement.getAttribute('data-font');
+    if (currentFont === 'serif') {
+        setFont('sans');
+    } else {
+        setFont('serif');
+    }
+}
+
+function loadSavedFont() {
+    const savedFont = localStorage.getItem('font');
+    if (savedFont === 'sans') {
+        setFont('sans');
+    } else {
+        setFont('serif');  // default to serif
+    }
+}
+
+// ---------- SPEED READING ENGINE ----------
 function getDelayMs() {
     if (currentWPM <= 0) return 200;
-    // words per minute -> milliseconds per word
     return 60000 / currentWPM;
 }
 
-// stop any running timer
 function stopTimer() {
     if (timer) {
         clearInterval(timer);
@@ -33,14 +95,12 @@ function stopTimer() {
     isPlaying = false;
 }
 
-// display current word (based on currentIndex)
 function displayCurrentWord() {
     if (wordsArray.length === 0) {
         wordDisplay.innerText = '📖';
         return;
     }
     if (currentIndex >= wordsArray.length) {
-        // finished reading
         wordDisplay.innerText = '🏁 THE END';
         stopTimer();
         statusMsg.innerText = '✅ Finished! Load new text or reset.';
@@ -50,7 +110,6 @@ function displayCurrentWord() {
     wordDisplay.innerText = word;
 }
 
-// main tick: move to next word
 function nextWord() {
     if (!isPlaying) return;
     if (wordsArray.length === 0) {
@@ -64,19 +123,16 @@ function nextWord() {
         currentIndex++;
         displayCurrentWord();
         
-        // if after increment we reached the end, stop playing
         if (currentIndex >= wordsArray.length) {
             stopTimer();
             statusMsg.innerText = '🎉 Complete! Great job.';
             wordDisplay.innerText = '✨ DONE ✨';
         }
     } else {
-        // safety stop
         stopTimer();
     }
 }
 
-// start reading from current position
 function startReading() {
     if (wordsArray.length === 0) {
         statusMsg.innerText = '❌ No text loaded. Paste or load sample text.';
@@ -86,9 +142,9 @@ function startReading() {
         statusMsg.innerText = '🔄 End reached. Press RESET to start over.';
         return;
     }
-    if (isPlaying) return; // already playing
+    if (isPlaying) return;
     
-    stopTimer(); // clear any existing timer just in case
+    stopTimer();
     
     isPlaying = true;
     const delay = getDelayMs();
@@ -98,17 +154,14 @@ function startReading() {
     statusMsg.innerText = `▶️ Reading at ${currentWPM} WPM | word ${currentIndex+1}/${wordsArray.length}`;
 }
 
-// pause reading
 function pauseReading() {
     if (!isPlaying) return;
     stopTimer();
     statusMsg.innerText = `⏸ Paused at word ${currentIndex+1}/${wordsArray.length}`;
 }
 
-// reset to first word
 function resetReading() {
-    const wasPlaying = isPlaying;
-    stopTimer();          // stop playback
+    stopTimer();
     currentIndex = 0;
     displayCurrentWord();
     if (wordsArray.length > 0) {
@@ -118,7 +171,6 @@ function resetReading() {
     }
 }
 
-// load text from textarea into wordsArray
 function loadTextFromInput() {
     const rawText = textInput.value;
     if (!rawText.trim()) {
@@ -126,9 +178,7 @@ function loadTextFromInput() {
         return false;
     }
     
-    // split by spaces but also keep punctuation attached to words (natural RSVP)
     let words = rawText.trim().split(/\s+/);
-    // filter out any empty strings
     words = words.filter(w => w.length > 0);
     
     if (words.length === 0) {
@@ -138,70 +188,54 @@ function loadTextFromInput() {
     
     wordsArray = words;
     currentIndex = 0;
-    stopTimer();            // stop any ongoing playback
+    stopTimer();
     displayCurrentWord();
     statusMsg.innerText = `📚 Loaded ${wordsArray.length} words. Press PLAY.`;
     return true;
 }
 
-// load sample text (classic literature / speed reading demo)
 function loadSampleText() {
     const sample = `The art of reading rapidly is not about skipping meaning but about reducing subvocalization and expanding peripheral vision. When you see one word at a time, your brain can process faster without regression. This method is called RSVP - Rapid Serial Visual Presentation. Studies show that with practice, comprehension remains high even at 500 to 700 words per minute. Trust your eyes and let the words flow. Speed reading is a superpower hiding in plain sight. Enjoy the journey!`;
     textInput.value = sample;
     loadTextFromInput();
 }
 
-// update WPM and if currently playing, restart timer with new speed
 function updateWPM(value) {
     currentWPM = value;
     wpmValueSpan.innerText = `${currentWPM} WPM`;
     
-    // if currently playing, we need to restart timer to apply new speed
     if (isPlaying && wordsArray.length > 0 && currentIndex < wordsArray.length) {
-        const wasPlaying = isPlaying;
-        if (wasPlaying) {
-            stopTimer();       // clear old interval
-            isPlaying = true;  // restore flag
-            const newDelay = getDelayMs();
-            timer = setInterval(() => {
-                nextWord();
-            }, newDelay);
-            statusMsg.innerText = `⚡ Speed changed to ${currentWPM} WPM (continuing)`;
-        }
+        stopTimer();
+        isPlaying = true;
+        const newDelay = getDelayMs();
+        timer = setInterval(() => {
+            nextWord();
+        }, newDelay);
+        statusMsg.innerText = `⚡ Speed changed to ${currentWPM} WPM (continuing)`;
     } else if (!isPlaying) {
-        // just update display, no timer restart needed
         statusMsg.innerText = `⚙️ Speed set to ${currentWPM} WPM`;
     }
 }
 
-// event listeners
-playBtn.addEventListener('click', () => {
-    startReading();
-});
-
-pauseBtn.addEventListener('click', () => {
-    pauseReading();
-});
-
-resetBtn.addEventListener('click', () => {
-    resetReading();
-});
+// ---------- EVENT LISTENERS ----------
+playBtn.addEventListener('click', startReading);
+pauseBtn.addEventListener('click', pauseReading);
+resetBtn.addEventListener('click', resetReading);
+themeToggle.addEventListener('click', toggleTheme);
+fontToggle.addEventListener('click', toggleFont);
 
 wpmSlider.addEventListener('input', (e) => {
     const val = parseInt(e.target.value, 10);
     updateWPM(val);
 });
 
-loadTextBtn.addEventListener('click', () => {
-    loadTextFromInput();
-});
+loadTextBtn.addEventListener('click', loadTextFromInput);
+sampleTextBtn.addEventListener('click', loadSampleText);
 
-sampleTextBtn.addEventListener('click', () => {
-    loadSampleText();
-});
-
-// initialize with demo text
+// ---------- INITIALIZATION ----------
 (function init() {
+    loadSavedTheme();  // Load user's theme preference
+    
     const introText = "Welcome to Speed Reader! Paste any article, book excerpt, or story. The words will flash one at a time. Click PLAY to start. Adjust speed with slider. This method boosts reading speed dramatically. Have fun and train your brain.";
     textInput.value = introText;
     loadTextFromInput();

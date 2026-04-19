@@ -1,69 +1,196 @@
+/* CSS Variables for theme support */
+:root {
+    /* Dark theme (default) */
+    --bg-gradient-start: #000000;
+    --bg-gradient-end: #000000;
+    --container-bg: rgba(0, 0, 0, 0.1);
+    --container-border: rgba(0, 0, 0, 0.2);
+    --screen-bg: #000000;
+    --screen-border: #000000;
+    --word-color: #ffffff;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --button-bg: #1e293b;
+    --button-text: white;
+    --button-primary: #3b82f6;
+    --button-primary-active: #2563eb;
+    --button-danger: #ef4444;
+    --speed-control-bg: #0f172a;
+    --slider-bg: #334155;
+    --textarea-bg: #1e293b;
+    --textarea-border: #334155;
+    --status-color: #64748b;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    /* Default sans-serif */
+    --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+#fontToggle {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    min-width: 50px;
+}
+
+/* When serif is active, button shows sans-serif "abc" */
+[data-font="serif"] #fontToggle {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* When sans is active, button shows serif "abc" */
+[data-font="sans"] #fontToggle {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --bg-gradient-start: #ffffff;
+    --bg-gradient-end: #ffffff;
+    --container-bg: rgba(255, 255, 255, 0.9);
+    --container-border: rgba(255, 255, 255, 0.1);
+    --screen-bg: #ffffff;
+    --screen-border: #ffffff;
+    --word-color: #000000;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --button-bg: #ffffff;
+    --button-text: #0f172a;
+    --button-primary: #2563eb;
+    --button-primary-active: #1d4ed8;
+    --button-danger: #dc2626;
+    --speed-control-bg: #f8fafc;
+    --slider-bg: #cbd5e1;
+    --textarea-bg: #ffffff;
+    --textarea-border: #ffffff;
+    --status-color: #475569;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 * {
     box-sizing: border-box;
-    user-select: none; /* Prevents accidental highlighting while reading */
+    user-select: none;
 }
 
 body {
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
     min-height: 100vh;
     margin: 0;
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background 0.3s ease;
 }
 
 .container {
     max-width: 700px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--container-bg);
     backdrop-filter: blur(10px);
     border-radius: 48px;
     padding: 24px 20px 32px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 45px var(--shadow-color);
+    border: 0px solid var(--container-border);
+    transition: all 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
 h1 {
-    text-align: center;
+    text-align: left;
     font-size: 1.8rem;
-    margin: 0 0 8px 0;
+    margin: 0;
     font-weight: 600;
-    background: linear-gradient(135deg, #fff, #a5f3fc);
+    background: linear-gradient(135deg, var(--text-primary), var(--word-color));
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
 }
 
+.theme-btn {
+    background: var(--button-bg);
+    border: none;
+    color: var(--button-text);
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 2px 6px var(--shadow-color);
+    width: auto;
+    min-width: 50px;
+}
+
+.theme-btn:active {
+    transform: scale(0.95);
+}
+
+.font-btn {
+    background: var(--button-bg);
+    border: none;
+    color: var(--button-text);
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 2px 6px var(--shadow-color);
+    width: auto;
+    min-width: 50px;
+}
+
+.font-btn:active {
+    transform: scale(0.95);
+}
+
 .sub {
     text-align: center;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-size: 0.85rem;
     margin-bottom: 24px;
-    border-bottom: 1px dashed #334155;
+    border-bottom: 1px dashed var(--screen-border);
     padding-bottom: 12px;
 }
 
 /* Word display area */
 .screen {
-    background: #0f172a;
+    background: var(--screen-bg);
     border-radius: 32px;
     padding: 60px 20px;
     margin-bottom: 24px;
     text-align: center;
-    border: 2px solid #334155;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.2);
+    border: 2px solid var(--screen-border);
+    box-shadow: inset 0 2px 5px var(--shadow-color), 0 8px 20px var(--shadow-color);
+    transition: all 0.3s ease;
 }
 
 .word {
     font-size: 3.2rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    color: #facc15;
+    color: var(--word-color);
     word-break: break-word;
     transition: all 0.05s ease;
-    font-family: 'Courier New', 'Fira Code', monospace;
+    /* font-family: 'Courier New', 'Fira Code', monospace; */
+    font-family: var(--font-family);
+    transition: font-family 0.2s ease;
+}
+
+[data-font="serif"] .word {
+    font-family: 'Courier Prime', Georgia, 'Times New Roman', serif;
+}
+
+[data-font="sans"] .word {
+    /* font-family: 'Courier New', 'Fira Code', monospace; */
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Controls */
@@ -76,20 +203,21 @@ h1 {
 }
 
 button {
-    background: #1e293b;
+    background: var(--button-bg);
     border: none;
-    color: white;
+    color: var(--button-text);
     font-size: 1.2rem;
     font-weight: 600;
     padding: 10px 20px;
     border-radius: 60px;
     cursor: pointer;
     transition: 0.2s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 6px var(--shadow-color);
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-family: inherit;
+    font-variant-emoji: text;  /* Force text-style emoji rendering */
 }
 
 button:active {
@@ -97,21 +225,22 @@ button:active {
 }
 
 button.primary {
-    background: #3b82f6;
+    background: var(--button-primary);
     color: white;
-    box-shadow: 0 4px 12px #3b82f640;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 button.primary:active {
-    background: #2563eb;
+    background: var(--button-primary-active);
 }
 
 button.danger {
-    background: #ef4444;
+    background: var(--button-danger);
+    color: white;
 }
 
 .speed-control {
-    background: #0f172a;
+    background: var(--speed-control-bg);
     padding: 12px 16px;
     border-radius: 60px;
     display: flex;
@@ -120,10 +249,11 @@ button.danger {
     flex-wrap: wrap;
     justify-content: center;
     margin-bottom: 20px;
+    transition: all 0.3s ease;
 }
 
 .speed-label {
-    color: #cbd5e1;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
@@ -131,49 +261,67 @@ input[type="range"] {
     width: 200px;
     height: 4px;
     border-radius: 10px;
-    background: #334155;
+    background: var(--slider-bg);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--button-primary);
+    cursor: pointer;
 }
 
 #wpmValue {
-    background: #00000066;
+    background: rgba(0, 0, 0, 0.2);
     padding: 4px 12px;
     border-radius: 40px;
     font-weight: bold;
-    color: #facc15;
+    color: var(--word-color);
     min-width: 70px;
     text-align: center;
 }
 
 /* text input area */
 .text-input-area {
-    background: #0f172a;
+    background: var(--speed-control-bg);
     border-radius: 28px;
     padding: 12px;
     margin-top: 12px;
+    transition: all 0.3s ease;
 }
 
 textarea {
     width: 100%;
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: #f1f5f9;
+    background: var(--textarea-bg);
+    border: 1px solid var(--textarea-border);
+    color: var(--text-primary);
     padding: 14px;
     border-radius: 24px;
     font-size: 1rem;
     font-family: inherit;
     resize: vertical;
+    transition: all 0.3s ease;
 }
 
 textarea:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: var(--button-primary);
 }
 
 .status {
     text-align: center;
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--status-color);
     margin-top: 16px;
+    transition: color 0.3s ease;
 }
 
 .footer-buttons {
@@ -194,4 +342,26 @@ textarea:focus {
         padding: 8px 14px;
         font-size: 1rem;
     }
+    .theme-btn {
+        font-size: 1.2rem;
+        padding: 6px 10px;
+    }
 }
+
+/* Font toggle button shows the OPPOSITE font style */
+#fontToggle.show-serif {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+#fontToggle.show-sans {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Make the font toggle button display "abc" in serif by default */
+#fontToggle {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
