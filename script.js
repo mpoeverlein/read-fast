@@ -115,22 +115,6 @@ function getDelayMs() {
     return 60000 / currentWPM;
 }
 
-// Helper function to check if a word needs longer display
-function needsLongerDisplay(word) {
-    // Check if word ends with period or comma
-    if (word.endsWith('.') || word.endsWith(',')) {
-        return true;
-    }
-    
-    // Check if word is "not" or "none" (case-insensitive, after removing punctuation)
-    const cleanWord = word.replace(/[.,!?;:]$/, '').toLowerCase();
-    if (cleanWord === 'not' || cleanWord === 'none') {
-        return true;
-    }
-    
-    return false;
-}
-
 function stopTimer() {
     if (timer) {
         clearInterval(timer);
@@ -154,8 +138,6 @@ function displayCurrentWord() {
     wordDisplay.innerText = word;
 }
 
-let longDisplayTimer = null; // Timer for extended word display
-
 function nextWord() {
     if (!isPlaying) return;
     if (wordsArray.length === 0) {
@@ -166,43 +148,13 @@ function nextWord() {
     }
     
     if (currentIndex < wordsArray.length) {
-        const currentWord = wordsArray[currentIndex];
-        const needsLonger = needsLongerDisplay(currentWord);
-        
-        // Move to next word index but handle display timing
         currentIndex++;
+        displayCurrentWord();
         
-        if (needsLonger) {
-            // Display the word longer (double time)
-            if (longDisplayTimer) clearTimeout(longDisplayTimer);
-            
-            // Show the word
-            displayCurrentWord();
-            
-            // Schedule the move to next word AFTER the extended time
-            if (currentIndex < wordsArray.length) {
-                const delay = getDelayMs() * 2; // Double the normal display time
-                longDisplayTimer = setTimeout(() => {
-                    if (isPlaying && currentIndex < wordsArray.length) {
-                        displayCurrentWord();
-                    }
-                    longDisplayTimer = null;
-                }, delay);
-            } else if (currentIndex >= wordsArray.length) {
-                // Reached the end
-                stopTimer();
-                statusMsg.innerText = '🎉 Complete! Great job.';
-                wordDisplay.innerText = '✨ DONE ✨';
-            }
-        } else {
-            // Normal display
-            displayCurrentWord();
-            
-            if (currentIndex >= wordsArray.length) {
-                stopTimer();
-                statusMsg.innerText = '🎉 Complete! Great job.';
-                wordDisplay.innerText = '✨ DONE ✨';
-            }
+        if (currentIndex >= wordsArray.length) {
+            stopTimer();
+            statusMsg.innerText = '🎉 Complete! Great job.';
+            wordDisplay.innerText = '✨ DONE ✨';
         }
     } else {
         stopTimer();
@@ -222,12 +174,6 @@ function startReading() {
     
     stopTimer();
     
-    // Clear any pending long display timer
-    if (longDisplayTimer) {
-        clearTimeout(longDisplayTimer);
-        longDisplayTimer = null;
-    }
-    
     isPlaying = true;
     const delay = getDelayMs();
     timer = setInterval(() => {
@@ -239,21 +185,11 @@ function startReading() {
 function pauseReading() {
     if (!isPlaying) return;
     stopTimer();
-    // Clear any pending long display timer on pause
-    if (longDisplayTimer) {
-        clearTimeout(longDisplayTimer);
-        longDisplayTimer = null;
-    }
     statusMsg.innerText = `⏸ Paused at word ${currentIndex+1}/${wordsArray.length}`;
 }
 
 function resetReading() {
     stopTimer();
-    // Clear any pending long display timer on reset
-    if (longDisplayTimer) {
-        clearTimeout(longDisplayTimer);
-        longDisplayTimer = null;
-    }
     currentIndex = 0;
     displayCurrentWord();
     if (wordsArray.length > 0) {
@@ -302,18 +238,13 @@ function loadTextFromInput() {
     wordsArray = processedWords;
     currentIndex = 0;
     stopTimer();
-    // Clear any pending long display timer
-    if (longDisplayTimer) {
-        clearTimeout(longDisplayTimer);
-        longDisplayTimer = null;
-    }
     displayCurrentWord();
     statusMsg.innerText = `📚 Loaded ${wordsArray.length} words. Press PLAY.`;
     return true;
 }
 
 function loadSampleText() {
-    const sample = `The art of reading rapidly is not about skipping meaning but about reducing subvocalization and expanding peripheral vision. When you see one word at a time, your brain can process faster without regression. This method is called RSVP - Rapid Serial Visual Presentation. Studies show that with practice, comprehension remains high even at 500 to 700 words per minute. Trust your eyes and let the words flow. Speed reading is a superpower hiding in plain sight. None can deny its benefits. Enjoy the journey!`;
+    const sample = `The art of reading rapidly is not about skipping meaning but about reducing subvocalization and expanding peripheral vision. When you see one word at a time, your brain can process faster without regression. This method is called RSVP - Rapid Serial Visual Presentation. Studies show that with practice, comprehension remains high even at 500 to 700 words per minute. Trust your eyes and let the words flow. Speed reading is a superpower hiding in plain sight. Enjoy the journey!`;
     textInput.value = sample;
     loadTextFromInput();
 }
@@ -323,11 +254,6 @@ function updateWPM(value) {
     
     if (isPlaying && wordsArray.length > 0 && currentIndex < wordsArray.length) {
         stopTimer();
-        // Clear any pending long display timer when changing speed
-        if (longDisplayTimer) {
-            clearTimeout(longDisplayTimer);
-            longDisplayTimer = null;
-        }
         isPlaying = true;
         const newDelay = getDelayMs();
         timer = setInterval(() => {
