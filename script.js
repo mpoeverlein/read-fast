@@ -4,6 +4,7 @@ let currentIndex = 0;      // current word position
 let isPlaying = false;
 let timer = null;
 let currentWPM = 300;       // default
+let splitLength = 16; // words of this length are split
 
 // DOM elements
 document.addEventListener('DOMContentLoaded', function() {
@@ -275,7 +276,7 @@ function loadTextFromInput() {
     // Split long words into halves
     let processedWords = [];
     for (let word of words) {
-        if (word.length > 10 && word.includes('-')) {
+        if (word.length > splitLength && word.includes('-')) {
             // Split along hyphen
             let hyphenParts = word.split('-');
             for (let part of hyphenParts) {
@@ -283,7 +284,7 @@ function loadTextFromInput() {
                     processedWords.push(part);
                 }
             }
-        } else if (word.length > 10) {
+        } else if (word.length > splitLength) {
             const midpoint = Math.ceil(word.length / 2);
             const firstHalf = word.slice(0, midpoint);
             const secondHalf = word.slice(midpoint);
