@@ -4,7 +4,7 @@ let currentIndex = 0;      // current word position
 let isPlaying = false;
 let timer = null;
 let currentWPM = 300;       // default
-let splitLength = 16; // words of this length are split
+let splitLength = 20; // words of this length are split
 
 // DOM elements
 document.addEventListener('DOMContentLoaded', function() {
