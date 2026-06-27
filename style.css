@@ -313,7 +313,7 @@ textarea:focus {
 
 @media (max-width: 550px) {
     .word {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
     .screen {
         padding: 40px 15px;
