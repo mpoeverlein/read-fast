@@ -5,6 +5,10 @@ let isPlaying = false;
 let timer = null;
 let currentWPM = 300;       // default
 let splitLength = 16; // words of this length are split
+let speedChange = 10; // increment/decrement wpm
+let posChange = 100; // increment/decrement position
+let maxWPM = 800;
+let longLength = 10; // words of this length are displayed twice
 
 // DOM elements
 document.addEventListener('DOMContentLoaded', function() {
@@ -25,25 +29,25 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function incrementWPM() {
-    let newWPM = currentWPM + 10;
-    if (newWPM > 800) newWPM = 800;
+    let newWPM = currentWPM + speedChange;
+    if (newWPM > maxWPM) newWPM = maxWPM;
     updateWPM(newWPM);
 }
 
 function decrementWPM() {
-    let newWPM = currentWPM - 10;
-    if (newWPM < 10) newWPM = 10;
+    let newWPM = currentWPM - speedChange;
+    if (newWPM < speedChange) newWPM = speedChange;
     updateWPM(newWPM);
 }
 
 function incrementPos() {
-    let newPos = currentIndex + 100;
+    let newPos = currentIndex + posChange;
     if (newPos > wordsArray.length - 1) newPos = wordsArray.length;
     currentIndex = newPos;
 }
 
 function decrementPos() {
-    let newPos = currentIndex - 100;
+    let newPos = currentIndex - posChange;
     if (newPos < 0) newPos = - 1;
     currentIndex = newPos;
 }
@@ -178,7 +182,6 @@ function startReading() {
         statusMsg.innerText = '🔄 End reached. Press RESET to start over.';
         return;
     }
-    // if (isPlaying) return;
     
     stopTimer();
     
@@ -186,13 +189,11 @@ function startReading() {
     const delay = getDelayMs();
     timer = setInterval(() => {
         nextWord();
-        console.log('word');
     }, delay);
     statusMsg.innerText = `▶️ Reading at ${currentWPM} WPM | word ${currentIndex+1}/${wordsArray.length}`;
 }
 
 function pauseReading() {
-    // if (!isPlaying) return;
     stopTimer();
     statusMsg.innerText = `⏸ Paused at word ${currentIndex+1}/${wordsArray.length}`;
 }
@@ -206,6 +207,18 @@ function resetReading() {
     } else {
         statusMsg.innerText = `⟳ Reset, but no text loaded.`;
     }
+}
+
+function duplicateLongOrEndingWithPeriod(arr) {
+    let result = [];
+    for (let item of arr) {
+        if (item.length > longLength || /[.!?]$/.test(item)) {
+            result.push(item, item);
+        } else {
+            result.push(item);
+        }
+    }
+    return result;
 }
 
 function loadTextFromInput() {
@@ -224,9 +237,11 @@ function loadTextFromInput() {
         if (word.length > splitLength && word.includes('-')) {
             // Split along hyphen
             let hyphenParts = word.split('-');
-            for (let part of hyphenParts) {
+            for (let i = 0; i < hyphenParts.length; i++) {
+                let part = hyphenParts[i];
                 if (part.length > 0) {
-                    processedWords.push(part);
+                    // processedWords.push(part);
+                    processedWords.push(i === hyphenParts.length - 1 ? part : part + '-');
                 }
             }
         } else if (word.length > splitLength) {
@@ -244,13 +259,15 @@ function loadTextFromInput() {
         return false;
     }
     
-    wordsArray = processedWords;
+    wordsArray = duplicateLongOrEndingWithPeriod(processedWords);
     currentIndex = 0;
     stopTimer();
     displayCurrentWord();
     statusMsg.innerText = `📚 Loaded ${wordsArray.length} words. Press PLAY.`;
     return true;
 }
+
+
 
 function loadSampleText() {
     const sample = `The art of reading rapidly is not about skipping meaning but about reducing subvocalization and expanding peripheral vision. When you see one word at a time, your brain can process faster without regression. This method is called RSVP - Rapid Serial Visual Presentation. Studies show that with practice, comprehension remains high even at 500 to 700 words per minute. Trust your eyes and let the words flow. Speed reading is a superpower hiding in plain sight. Enjoy the journey!`;
