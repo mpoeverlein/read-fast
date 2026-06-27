@@ -9,8 +9,6 @@ let splitLength = 16; // words of this length are split
 // DOM elements
 document.addEventListener('DOMContentLoaded', function() {
     const wordDisplay = document.getElementById('wordDisplay');
-    const playBtn = document.getElementById('playBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
     const resetBtn = document.getElementById('resetBtn');
     const wpmDisplay = document.getElementById('wpmDisplay');
     const textInput = document.getElementById('textInput');
@@ -19,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusMsg = document.getElementById('statusMsg');
     const themeToggle = document.getElementById('themeToggle');
     const fontToggle = document.getElementById('fontToggle');
+    const playToggle = document.getElementById('playToggle');
     const incrementWPMBtn = document.getElementById('incrementWPMBtn');
     const decrementWPMBtn = document.getElementById('decrementWPMBtn');
     const incrementPosBtn = document.getElementById('incrementPosBtn');
@@ -161,6 +160,15 @@ function nextWord() {
     }
 }
 
+function togglePlay() {
+    isPlaying = !(isPlaying);
+    if (isPlaying) {
+        startReading();
+    } else {
+        pauseReading();
+    }
+}
+
 function startReading() {
     if (wordsArray.length === 0) {
         statusMsg.innerText = '❌ No text loaded. Paste or load sample text.';
@@ -170,7 +178,7 @@ function startReading() {
         statusMsg.innerText = '🔄 End reached. Press RESET to start over.';
         return;
     }
-    if (isPlaying) return;
+    // if (isPlaying) return;
     
     stopTimer();
     
@@ -178,12 +186,13 @@ function startReading() {
     const delay = getDelayMs();
     timer = setInterval(() => {
         nextWord();
+        console.log('word');
     }, delay);
     statusMsg.innerText = `▶️ Reading at ${currentWPM} WPM | word ${currentIndex+1}/${wordsArray.length}`;
 }
 
 function pauseReading() {
-    if (!isPlaying) return;
+    // if (!isPlaying) return;
     stopTimer();
     statusMsg.innerText = `⏸ Paused at word ${currentIndex+1}/${wordsArray.length}`;
 }
@@ -266,8 +275,17 @@ function updateWPM(value) {
 }
 
 // ---------- EVENT LISTENERS ----------
-playBtn.addEventListener('click', startReading);
-pauseBtn.addEventListener('click', pauseReading);
+playToggle.addEventListener('click', function() {
+    togglePlay();
+    this.textContent = isPlaying ? '⏸' : '▶';
+    // if (this.textContent === '▶') {
+    //     this.textContent = '■';  // or use '⏹' for a more standard stop icon
+    // } else {
+    //     this.textContent = '▶';
+    // }
+
+}
+);
 resetBtn.addEventListener('click', resetReading);
 themeToggle.addEventListener('click', toggleTheme);
 fontToggle.addEventListener('click', toggleFont);
@@ -285,7 +303,7 @@ sampleTextBtn.addEventListener('click', loadSampleText);
 (function init() {
     loadSavedTheme();  // Load user's theme preference
     
-    const introText = "Welcome to Speed Reader! Paste any article, book excerpt, or story. The words will flash one at a time. Click ▶ to start. Adjust speed with +/-. This method boosts reading speed dramatically. Have fun and train your brain.";
+    const introText = "Welcome to Speed Reader! Paste any article, book excerpt, or story. The words will flash one at a time. Click ▶ to start. Adjust speed with 🐢/🐇. This method boosts reading speed dramatically. Have fun and train your brain.";
     textInput.value = introText;
     loadTextFromInput();
     currentWPM = 300;
